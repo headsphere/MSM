@@ -1,0 +1,105 @@
+---
+title: "Exercise 2"
+author: "Nick Head"
+date: "9 March 2015"
+output: html_document
+---
+###Q1
+```{r}
+n = 10000
+u = runif(n)
+xInv = asin(u)
+hist(xInv)
+plot(ecdf(xInv))
+```
+
+###Q2
+
+Inversion:
+```{r}
+fInv_fn = function(u){
+  return(1 - sqrt(1 - u))
+}
+
+u = runif(5000)
+#xInv = 1 - sqrt(1 - u)
+xInv = fInv_fn(u)
+hist(xInv)
+plot(ecdf(xInv))
+```
+
+Accept reject:
+
+```{r}
+Simulate <- function(Nsim, f_fn, g_fn, randg_fn) {
+  #M is found by finding the maximum of f(x)/g(x) over [0,1]
+  M = optimize(f=function(x){f_fn(x)/g_fn(x)},interval=c(0,1),maximum=TRUE)$objective
+  print(M)
+  
+  #graphing logic
+  ylim <- c(0, M)
+  xlim <- c(0, 1)
+  curve(f_fn(x),from = 0,to = 1, xlim = xlim, ylim = ylim)
+  par(new=T)
+  
+  x_star = randg_fn(Nsim)
+  y_star = runif(Nsim, max = M * g_fn(x_star)) # y* drawn from proposal function g
+  x = NULL
+  successCount = 0
+  for(i in 1:Nsim){
+    #accept x* if y* <= f(x*)
+    if(y_star[i] <= f_fn(x_star[i])){ 
+      successCount = successCount + 1
+      x[successCount] = x_star[i]
+      
+      #plot the accepted points
+      points(x_star[i], y_star[i], xlab = NA, ylab = NA, xaxt='n', yaxt='n', xlim = xlim, ylim = ylim, col="blue")
+    }
+    else{
+      #plot the rejected points
+      points(x_star[i], y_star[i], xlab = NA, ylab = NA, xaxt='n', yaxt='n', xlim = xlim, ylim = ylim, col="red")
+    }
+  }
+  hist(x)
+  return(successCount)
+}
+
+Nsim = 10000
+successCount = Simulate(Nsim, 
+                        f_fn = function(u){2 - (2*u)},
+                        g_fn = function (y) {dunif(y)},
+                        randg_fn = function (Nsim) {runif(Nsim)})
+```
+
+###Q3
+
+$$X \sim Bin(10,0.4)$$
+
+```{r}
+n <- 10
+p <- .4
+t <- seq(0,n-1)
+prob = pbinom(t,n,p)
+```
+
+With a CDF:
+```{r echo=FALSE}
+library(knitr)
+df = as.data.frame(round(t(prob),4))
+colnames(df) = t
+kable(df)
+```
+
+```{r}
+Nsim=10^4; 
+xTable=numeric(Nsim)
+uvec = runif(Nsim)
+xTable = as.numeric(lapply(uvec, function(u){ sum(prob<u)}))
+```
+Compare with `rbinom`:
+```{r}
+xBinom = rbinom(Nsim, n, p)
+par(mfcol = c(1,2))
+hist(xTable)
+hist(xBinom)
+```
