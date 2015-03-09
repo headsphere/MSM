@@ -96,10 +96,31 @@ xTable=numeric(Nsim)
 uvec = runif(Nsim)
 xTable = as.numeric(lapply(uvec, function(u){ sum(prob<u)}))
 ```
+
+Sum of bernouilly trials:
+```{r}
+bernouilly = numeric(Nsim)
+for(i in 1:Nsim){
+  y = numeric(n)
+  for(j in 1:n){
+    u = runif(1)
+    if(u < p){
+      y[j] = 1
+    }
+    else
+    {
+      y[j] = 0
+    }
+  }
+  bernouilly[i] = sum(y)
+}
+```
+
 Compare with `rbinom`:
 ```{r}
 xBinom = rbinom(Nsim, n, p)
-par(mfcol = c(1,2))
+par(mfcol = c(1,3))
 hist(xTable)
+hist(bernouilly)
 hist(xBinom)
 ```
