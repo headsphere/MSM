@@ -66,3 +66,58 @@ print(x)
 sample(1:6,1000, replace=TRUE)
 ```
 
+###Q6
+
+```{r}
+GenerateRandomUniforms <- function (a, b, M, seed, n) {
+  rnumbers = numeric(n)
+  for(j in 1:n){
+    seed = (a*seed + b)%%M
+    rnumbers[j] = seed/M
+  }
+  return(rnumbers)
+}
+```
+
+Firstly an acceptable generator (although showing some periodicity: 
+```{r}
+u = GenerateRandomUniforms(a = 172, b = 0, M = 30307, seed = 17218, n=20)
+u
+par(mfcol = c(1,2))
+hist(u)
+acf(u)
+```
+
+###8
+
+```{r}
+nIters = 1000
+vals = numeric(nIters)
+for(i in 1:nIters){
+  vals[i]=sum(runif(3,0,4))
+}
+
+```
+####a) `r mean(vals)`
+
+####b) `r var(vals)`
+```{r}
+vals = numeric(nIters)
+for(i in 1:nIters){
+  vals[i]=sum(runif(3,0,4)^2)
+}
+```
+####c) `r mean(vals)`
+
+```{r}
+vals = numeric(nIters)
+for(i in 1:nIters){
+  vals[i] <- sum(runif(3,0,4)^(1/2)) 
+#  if(val> 0.8)
+#    vals[i] = 1
+#  else
+#    vals[i] = 0
+    
+}
+```
+####c) `r sum(vals[x>0.8])/nIters`
