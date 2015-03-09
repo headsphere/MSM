@@ -1,0 +1,68 @@
+---
+title: "Exercise 1"
+author: "Nick Head"
+date: "8 March 2015"
+output: html_document
+---
+
+###Q1
+$$\frac{\pi^2}{6}$$
+
+`r (pi^2)/6`
+
+```{r}
+nIters = 500
+sum = 0
+for(i in 1:nIters){
+  sum = sum + 1/i^2
+}
+sum
+```
+###Q2
+
+```{r}
+u = runif(1000)
+breaks <- c(0,.25,.5,.75,1)
+table(cut(u, breaks = breaks))
+```
+
+###Q3
+
+```{r}
+sum = 0
+count = 0
+while(sum < 999){
+  sum = sum + runif(1)
+  count = count + 1 
+}
+count
+```
+
+###Q4
+```{r}
+f_fn = function(x){
+  return (x^4 + 3*x^3 - 2*x^2 - 1)
+}
+fprime_fn = function(x){
+  return (4*x^3 + 9*x^2 - 4*x)
+}
+
+x = numeric(1)
+i = 1
+x[i] = 1
+tolerance <- 0.00001
+while( abs( f_fn(x[i])) > tolerance) {
+  i = i + 1
+  x[i] = x[i-1] - f_fn(x[i-1]) / fprime_fn(x[i-1]) 
+  print(x[i])
+}
+print(x)
+```
+
+
+###Q5
+
+```{r}
+sample(1:6,1000, replace=TRUE)
+```
+
