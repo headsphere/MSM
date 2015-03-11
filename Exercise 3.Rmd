@@ -8,76 +8,113 @@ output: html_document
 ###Q1 Generating normal random variables
 
 ####a: Using central limit theorem
+
 ```{r}
-Nsims = 50000
-Nvec = numeric(Nsims)
-i = 0
-while(i < Nsims){
-  N = sum(runif(12)) - 6
-  Nvec[i] = N
-  i = i + 1
+SimNormalCLT <- function (Nsims) {
+  Nvec = numeric(Nsims)
+  i = 0
+  while(i < Nsims){
+    N = sum(runif(12)) - 6
+    Nvec[i] = N
+    i = i + 1
+  }
 }
-length(Nvec)
-hist(Nvec)
 ```
 
 ####b: Using Box Muller
 
 ```{r}
-Nvec = numeric(Nsims)
-i = 0
-while(i < Nsims){
-  u1 = runif(1)
-  u2 = runif(1)
-  r = sqrt(-2 * log(u1))
-  theta = 2 * pi * u2
-  x = r * cos(theta)
-  y = r * sin(theta)
-  Nvec[i] = x
-  Nvec[i+1] = y
-  i = i + 2
+SimNormalBoxMuller <- function (Nsims) {
+  i = 0
+  Nvec = numeric(Nsims)
+  while(i < Nsims){
+    u1 = runif(1)
+    u2 = runif(1)
+    r = sqrt(-2 * log(u1))
+    theta = 2 * pi * u2
+    x = r * cos(theta)
+    y = r * sin(theta)
+    Nvec[i] = x
+    Nvec[i+1] = y
+    i = i + 2
+  }
 }
-length(Nvec)
-hist(Nvec)
 ```
 
 ####c: Using Polar-Mascaglia
 ```{r}
-Nvec = numeric(Nsims)
-i = 0
-while(i < Nsims){
-  u1 = runif(1)
-  u2 = runif(1)
-  v1 = (2*u1)-1
-  v2 = (2*u2)-1
-  S = v1^2 + v2^2
-  if(S < 1){ # inside the unit circle
-    i = i + 2
-    foo = sqrt((-2 * log(S))/S)
-    x = foo * v1
-    y = foo * v2
-    Nvec[i] = x
-    Nvec[i+1] = y
+SimNormalPolar <- function (Nsims) {
+  i = 0
+  Nvec = numeric(Nsims)
+  while(i < Nsims){
+    u1 = runif(1)
+    u2 = runif(1)
+    v1 = (2*u1)-1
+    v2 = (2*u2)-1
+    S = v1^2 + v2^2
+    if(S < 1){ # inside the unit circle
+      i = i + 2
+      foo = sqrt((-2 * log(S))/S)
+      x = foo * v1
+      y = foo * v2
+      Nvec[i] = x
+      Nvec[i+1] = y
+    }
   }
 }
-length(Nvec)
-hist(Nvec)
 ```
 
 ####d: Using Ratio of Uniforms
 
 ```{r}
-Nvec = numeric(Nsims)
-i = 0
-while(i < Nsims){
-  u = runif(1, 0, 1)
-  v = runif(1, -1, 1)
-  if(v^2 < -4 * u^2 * log(u)){ # test
-    i = i + 1
-    Nvec[i] = v/u
+SimNormalRatioUniforms <- function (Nsims) {
+  i = 0
+  Nvec = numeric(Nsims)
+  while(i < Nsims){
+    u = runif(1, 0, 1)
+    v = runif(1, -1, 1)
+    if(v^2 < -4 * u^2 * log(u)){ # test
+      i = i + 1
+      Nvec[i] = v/u
+    }
   }
 }
-length(Nvec)
-hist(Nvec)
+```
+
+####e: Using `rnorm`
+
+```{r}
+Nsims = 50000
+Nvec = rnorm(Nsims)
+```
+
+####f: Benchmarking
+
+```{r}
+library(microbenchmark)
+microbenchmark(SimNormalCLT(Nsims), 
+               SimNormalRatioUniforms(Nsims),
+               SimNormalBoxMuller(Nsims),
+               SimNormalPolar(Nsims),
+               rnorm(Nsims),
+               times = 1
+)
+```
+
+###2
+
+####a: Using Accept-Reject
+
+```{r}
+library(devtools)
+source_gist("https://gist.github.com/headsphere/c49eeb3921c56efb537c")
+
+alpha <- 8
+beta <- 6
+Nsim = 1000
+successCount = Simulate(Nsim, 
+                        f_fn = function (x) {dbeta(x,alpha,beta)},
+                        g_fn = function (y) {dunif(y)},
+                        randg_fn = function (Nsim) {runif(Nsim)})
 ```
 
