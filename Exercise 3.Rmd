@@ -11,9 +11,11 @@ output: html_document
 ```{r}
 Nsims = 50000
 Nvec = numeric(Nsims)
-for(i in 1: Nsims){
+i = 0
+while(i < Nsims){
   N = sum(runif(12)) - 6
   Nvec[i] = N
+  i = i + 1
 }
 length(Nvec)
 hist(Nvec)
@@ -23,7 +25,8 @@ hist(Nvec)
 
 ```{r}
 Nvec = numeric(Nsims)
-for(i in 1: Nsims){
+i = 0
+while(i < Nsims){
   u1 = runif(1)
   u2 = runif(1)
   r = sqrt(-2 * log(u1))
@@ -37,3 +40,44 @@ for(i in 1: Nsims){
 length(Nvec)
 hist(Nvec)
 ```
+
+####c: Using Polar-Mascaglia
+```{r}
+Nvec = numeric(Nsims)
+i = 0
+while(i < Nsims){
+  u1 = runif(1)
+  u2 = runif(1)
+  v1 = (2*u1)-1
+  v2 = (2*u2)-1
+  S = v1^2 + v2^2
+  if(S < 1){ # inside the unit circle
+    i = i + 2
+    foo = sqrt((-2 * log(S))/S)
+    x = foo * v1
+    y = foo * v2
+    Nvec[i] = x
+    Nvec[i+1] = y
+  }
+}
+length(Nvec)
+hist(Nvec)
+```
+
+####d: Using Ratio of Uniforms
+
+```{r}
+Nvec = numeric(Nsims)
+i = 0
+while(i < Nsims){
+  u = runif(1, 0, 1)
+  v = runif(1, -1, 1)
+  if(v^2 < -4 * u^2 * log(u)){ # test
+    i = i + 1
+    Nvec[i] = v/u
+  }
+}
+length(Nvec)
+hist(Nvec)
+```
+
