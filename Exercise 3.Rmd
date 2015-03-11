@@ -1,0 +1,39 @@
+---
+title: "Exercise 3"
+author: "Nick Head"
+date: "11 March 2015"
+output: html_document
+---
+
+###Q1 Generating normal random variables
+
+####a: Using central limit theorem
+```{r}
+Nsims = 50000
+Nvec = numeric(Nsims)
+for(i in 1: Nsims){
+  N = sum(runif(12)) - 6
+  Nvec[i] = N
+}
+length(Nvec)
+hist(Nvec)
+```
+
+####b: Using Box Muller
+
+```{r}
+Nvec = numeric(Nsims)
+for(i in 1: Nsims){
+  u1 = runif(1)
+  u2 = runif(1)
+  r = sqrt(-2 * log(u1))
+  theta = 2 * pi * u2
+  x = r * cos(theta)
+  y = r * sin(theta)
+  Nvec[i] = x
+  Nvec[i+1] = y
+  i = i + 2
+}
+length(Nvec)
+hist(Nvec)
+```
