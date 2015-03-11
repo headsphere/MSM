@@ -141,3 +141,37 @@ while(i < Nsims){
 hist(Nvec)
 ks.test(Nvec, "dbeta", alpha, beta)
 ```
+
+###3
+
+####a: Using exponential interarrival times
+```{r}
+Nsims = 100
+lambda = 16
+y = rep(0, Nsims)
+e1 = exp(-lambda)
+z = runif(Nsims)
+for(i in 1:Nsims){
+  k = 0
+  u = z[i]
+  while(u > e1){
+    u = u * runif(1)
+    k = k + 1
+  }
+  y[i] = k
+}
+hist(y)
+mean(y)
+```
+
+####b: Using table lookup
+
+```{r}
+t=seq(0,2*lambda)
+prob=ppois(t, lambda)
+xTable=numeric(Nsims)
+uvec = runif(Nsims)
+xTable = as.numeric(lapply(uvec, function(u){ sum(prob<u)}))
+hist(xTable)
+mean(xTable)
+```
