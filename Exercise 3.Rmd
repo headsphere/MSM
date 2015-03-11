@@ -106,15 +106,38 @@ microbenchmark(SimNormalCLT(Nsims),
 ####a: Using Accept-Reject
 
 ```{r}
+alpha <- 8
+beta <- 6
+```
+
+```{r}
 library(devtools)
 source_gist("https://gist.github.com/headsphere/c49eeb3921c56efb537c")
 
-alpha <- 8
-beta <- 6
-Nsim = 1000
-successCount = Simulate(Nsim, 
-                        f_fn = function (x) {dbeta(x,alpha,beta)},
-                        g_fn = function (y) {dunif(y)},
-                        randg_fn = function (Nsim) {runif(Nsim)})
+SimBetaAcceptReject <- function (alpha, beta, Nsim, plot = FALSE) {
+  successCount = SimulateAcceptReject(Nsim, 
+                                      f_fn = function (x){dbeta(x,alpha,beta)},
+                                      g_fn = function (y) {dunif(y)},
+                                      randg_fn = function (Nsim) {runif(Nsim)},
+                                      plot = plot)
+}
+
+SimBetaAcceptReject(alpha, beta, 1000, TRUE)
+
+
 ```
 
+####b: Using sum of gammas
+
+```{r}
+i = 0 
+Nvec = numeric(Nsims)
+while(i < Nsims){
+  i = i + 1
+  g1 = rgamma(1, alpha, 1)
+  g2 = rgamma(1, beta, 1)
+  Nvec[i] = g1 + g2
+}
+hist(Nvec)
+ks.test(Nvec, "dbeta", alpha, beta)
+```
