@@ -257,3 +257,43 @@ PoissonCLT(n = 30, lambda = 5)
 ```{r}
 PoissonCLT(n = 30, lambda = 25)
 ```
+
+###6
+
+Permutation test:
+```{r}
+a <- c(0, 8, 11, 15)
+b <- c(0, 1, 2, 4)
+
+# Combine the two datasets into a single dataset
+# i.e., under the null hypothesis, there is no difference between the two groups
+combined = c(a,b)
+ 
+# Observed difference
+diff.observed = mean(b) - mean(a)
+ 
+number_of_permutations = 1000
+     
+diff.random = NULL
+for (i in 1 : number_of_permutations) {
+    # Sample from the combined dataset without replacement
+    shuffled = sample (combined, length(combined))
+     
+    a.random = shuffled[1 : length(a)]
+    b.random = shuffled[(length(a) + 1) : length(combined)]
+ 
+    # Null (permuated) difference
+    diff.random[i] = mean(b.random) - mean(a.random)
+}
+ 
+# P-value is the fraction of how many times the permuted difference is equal or more extreme than the observed difference
+ 
+pvalue = sum(abs(diff.random) >= abs(diff.observed)) / number_of_permutations
+print (pvalue)
+```
+
+Alternatively for an exact test:
+```{r}
+library(exactRankTests)
+perm.test(x = a, y = b, exact = TRUE)
+```
