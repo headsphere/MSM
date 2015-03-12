@@ -213,3 +213,47 @@ for(i in 1:10){
 res/10
 ```
 
+###5
+
+Finding appropriate n for CLT to hold:
+```{r}
+PoissonCLT <- function (n, lambda) {
+  Nsims <- 10000
+  means = numeric(Nsims)
+  
+  for(i in 1: Nsims){
+    means[i] = mean(rpois(n, lambda)*10)
+  }
+  
+  hist(means, ylim = c(0,4000))
+}
+
+#par(new=T)
+#x = seq(0, 5, 0.1)
+#y = dnorm(x, mean = mean(means), sd = sd(means))*8000
+#lines(x, y)
+```
+
+####a: P(0.2)
+
+```{r}
+PoissonCLT(n = 100, lambda = 0.2)
+```
+
+####b: P(1)
+
+```{r}
+PoissonCLT(n = 30, lambda = 1)
+```
+
+####c: P(5)
+
+```{r}
+PoissonCLT(n = 30, lambda = 5)
+```
+
+####d: P(25)
+
+```{r}
+PoissonCLT(n = 30, lambda = 25)
+```
