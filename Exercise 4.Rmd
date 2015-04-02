@@ -1,0 +1,19 @@
+---
+title: "Exercise 4"
+output: html_document
+---
+
+###1
+
+$$\theta = \int_0^1{e^{x^2} dx}$$
+
+```{r}
+f = function(x) exp(x^2)
+
+mean(f(runif(10000, 0, 1)))
+
+#sanity check:
+integrate(f, lower = 0, upper = 1)
+```
+
+####a

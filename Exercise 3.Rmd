@@ -182,9 +182,9 @@ $$\int_0^2{x^x dx}$$
 Using crude estimation:
 ```{r}
 u = runif(1000, 0, 2)
-mean(u^u)*(2-0)
+mean(u^u)
 ```
-Using hit-or-miss (THIS IS NOT WORKING PROPERLY!):
+Using hit-or-miss 
 ```{r}
 HitOrMiss <- function () {
   n = 10000
@@ -192,7 +192,7 @@ HitOrMiss <- function () {
   x = 0
   while(t < n){
     u = runif(1, 0, 2)
-    y = runif(1, 0, 2)
+    y = runif(1, 0, 4)
     #up = 1/(1 + u**3)
     up = u^u
     if(y < up){
@@ -204,7 +204,7 @@ HitOrMiss <- function () {
     t = t + 1
   }
   total = sum(x)
-  return(total/n)
+  return(4 * total/n)
 }
 res = 0
 for(i in 1:10){
