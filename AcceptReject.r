@@ -13,7 +13,6 @@
 SimulateAcceptReject <- function(Nsim, f_fn, g_fn, randg_fn, x_interval = c(0,1), plot = TRUE) {
   #M is found by finding the maximum of f(x)/g(x) over [0,1]
   M = optimize(f=function(x){f_fn(x)/g_fn(x)},interval=x_interval,maximum=TRUE)$objective
-  print(paste("M:", M))
   
   if(plot == TRUE){  
     #graphing logic

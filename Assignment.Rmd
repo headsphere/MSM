@@ -2,9 +2,8 @@
 title: "Modern Statistical Methods Assignment"
 author: "Nick Head"
 date: "15 April 2015"
-output: html_document
-header-includes:
-   - \usepackage[]{amsmath}
+output: pdf_document
+header-includes: \usepackage[]{amsmath}
 ---
 
 ##Question 1
@@ -31,18 +30,21 @@ fn <- function(x)
 curve(fn, from = -1, to = 3)
 ```
 
+\newpage
+
 ###b)
 
-```{r cache=TRUE}
+See Appendix 1 for further implemention details of the Accept-Reject algorithm.
 
+```{r cache=TRUE}
 source("AcceptReject.r")
 Nsim = 10000
-set.seed(1234)
 x = SimulateAcceptReject(Nsim, 
                          f_fn = fn,
                          g_fn = function (y) {dunif(y, min = 0, max = 2)},
                          randg_fn = function (Nsim) {runif(Nsim, min = 0, max = 2)},
                          x_interval = c(0, 2))
+
 ```
 
 ###c)
@@ -52,6 +54,48 @@ i) $$ E[log(X)] = `r mean(log(x))` $$
 ii) $$ P(log(X) < 0.5) = `r sum(log(x) < 0.5) / length(x)` $$  
 
 iii) $$ E[(log(X) | X > 0.5] = `r mean(log(x[x > 0.5]))`$$ 
+
+\newpage
+
+###d)
+
+```{r echo=FALSE}
+s = c(0.308, 1.936, 1.311, 0.536, 1.606, 1.514, 1.630, 1.295, 0.811, 1.145, 1.429, 0.811, 0.796, 0.988, 1.969, 1.161, 0.271, 0.053, 0.629, 1.171, 0.056, 1.313, 0.592, 0.934,  0.723)
+
+plot(ecdf(x), main="Theoretical CDF of Generated X vs Empirical CDF of S", col="red")
+plot(ecdf(s), add=TRUE, ylab = FALSE, xlab=FALSE, verticals = TRUE, do.points = FALSE, col = "blue")
+```
+
+\newpage
+
+###e)
+
+```{r results = 'asis', echo=FALSE}
+library(xtable)
+print(xtable(summary(data.frame(x=x, s=s))), comment=FALSE)
+boxplot(x, s, names = c("x", "s"))
+```
+
+As can be seen from the summary statistics and boxplots, the means of both $x$ and $s$ appear to be almost identical, as are the minimum and maximum values, indicating that both distributions appear to have similar supports. The main difference appears to be in the size of the interquartile ranges and hence the variances. $x$ appears to have a much larger variance than $s$ although both do appear to be somewhat symmetric around the mean.
+
+```{r echo=FALSE}
+par(mfrow=c(1, 2))
+hist(x)
+hist(s)
+```
+
+The histograms however appear to tell a different story. While $x$ clearly appears bimodal, $s$ clearly only appears to have one mode.
+
+###f)
+
+```{r warning=FALSE}
+ks = ks.test(x, s)
+ks
+```
+
+The Kolmogorov-Smirnoff tested conducted above indicates that we cannot reject the null hypothesis that the two datasets come from different distributions (at the 5% level, with a p-value of `r ks$p.value`). The statistic $D_n$ is calculated as the largest absolute deviation between the empirical distribution and the theoretical one against which we are comparing it. For this run the $D_n$ statistic is calculated as `r ks$statistic`. This can be seen visually in the chart in section d) as roughly the largest deviation between the theoretical CDF of $x$ and the empirical CDF of $s$.  
+
+This does however contradict some of our earlier findings. Even though some of the statistics such as mean and support of the distributions do indeed appear to be similar, by looking at the histograms the bimodal nature of the Camel distribution is clearly missing in the $s$ distribution. Without this key feature of the empirical dataset, we should be quite cynical of the results of this non-parametric test.
 
 \newpage
 
