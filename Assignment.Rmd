@@ -1,0 +1,66 @@
+---
+title: "Modern Statistical Methods Assignment"
+author: "Nick Head"
+date: "15 April 2015"
+output: html_document
+header-includes:
+   - \usepackage[]{amsmath}
+---
+
+##Question 1
+
+\[
+ f(x) =
+  \begin{cases}
+   6 x (1 - x)^2        & \text{if } 0 < x < 1 \\
+   6 (2 - x) (1 - x)^2  & \text{if } 1 \leq x < 2 \\
+   0                    & \text{otherwise}
+  \end{cases}
+\]
+
+###a)
+
+```{r}
+fn <- function(x) 
+  {
+    ifelse( x > 0 & x < 1, 6*x*(1 - x)^2, 
+            ifelse( x >= 1 & x < 2, 6*(2-x)*(1 - x)^2, 
+                    0))
+  }
+
+curve(fn, from = -1, to = 3)
+```
+
+###b)
+
+```{r cache=TRUE}
+
+source("AcceptReject.r")
+Nsim = 10000
+set.seed(1234)
+x = SimulateAcceptReject(Nsim, 
+                         f_fn = fn,
+                         g_fn = function (y) {dunif(y, min = 0, max = 2)},
+                         randg_fn = function (Nsim) {runif(Nsim, min = 0, max = 2)},
+                         x_interval = c(0, 2))
+```
+
+###c)
+
+i) $$ E[log(X)] = `r mean(log(x))` $$ 
+
+ii) $$ P(log(X) < 0.5) = `r sum(log(x) < 0.5) / length(x)` $$  
+
+iii) $$ E[(log(X) | X > 0.5] = `r mean(log(x[x > 0.5]))`$$ 
+
+\newpage
+
+## Appendix 1: Accept-Reject Code Listing
+```{r echo=FALSE}
+library(knitr)
+read_chunk("AcceptReject.r")
+```
+
+```{r SimulateAcceptReject}
+```
+

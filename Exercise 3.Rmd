@@ -284,6 +284,10 @@ for (i in 1 : number_of_permutations) {
  
     # Null (permuated) difference
     diff.random[i] = mean(b.random) - mean(a.random)
+    
+    if(abs(diff.random[i]) >= abs(diff.observed)){
+      print(shuffled)
+    }
 }
  
 # P-value is the fraction of how many times the permuted difference is equal or more extreme than the observed difference
