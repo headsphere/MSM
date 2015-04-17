@@ -6,6 +6,21 @@ output: pdf_document
 header-includes: \usepackage[]{amsmath}
 ---
 
+```{r echo=FALSE}
+library(knitr)
+read_chunk("RandomPermutationTest.R")
+read_chunk("AcceptReject.r")
+read_chunk("BootstrapTTest.r")
+```
+
+```{r RandomPermutationTest, echo=FALSE}
+```
+```{r SimulateAcceptReject, echo=FALSE}
+```
+```{r BootstrapTTest, echo=FALSE}
+```
+
+
 ##Question 1
 
 \[
@@ -37,8 +52,8 @@ curve(fn, from = -1, to = 3)
 See Appendix 1 for further implemention details of the Accept-Reject algorithm.
 
 ```{r cache=TRUE}
-source("AcceptReject.r")
 Nsim = 10000
+set.seed(1234)
 x = SimulateAcceptReject(Nsim, 
                          f_fn = fn,
                          g_fn = function (y) {dunif(y, min = 0, max = 2)},
@@ -99,12 +114,63 @@ This does however contradict some of our earlier findings. Even though some of t
 
 \newpage
 
-## Appendix 1: Accept-Reject Code Listing
-```{r echo=FALSE}
-library(knitr)
-read_chunk("AcceptReject.r")
+##Question 2
+
+###a)
+
+```{r}
+twain = c(0.225, 0.262, 0.217, 0.240, 0.230, 0.229, 0.235, 0.217)
+
+snod = c(0.209, 0.205, 0.196, 0.210, 0.202, 0.207, 0.224, 0.223, 0.220, 0.201)
+
+ttest = t.test(twain, snod)
 ```
 
-```{r SimulateAcceptReject}
+The t-test gives a p-value of: `r ttest$p.value`
+
+###b)
+
+The following test does a randomized permutation. The code is detailed in Appendix 2 
+```{r tidy=TRUE}
+pvalue = RandomPermutationTest(twain, snod)
 ```
+The random permutation test gives a p-value of: `r pvalue`
+
+This can be compared with an exact reandomization test:
+```{r warning=FALSE, message=FALSE}
+library(exactRankTests)
+exact = perm.test(x = twain, y = snod, exact = TRUE)
+```
+The exact randomization test gives a p-value of: `r exact$p.value`
+
+###c)
+
+The following test uses a bootstrap approach. The code is detailed in Appendix 3 
+
+```{r eval=TRUE}
+boot.p = BootstrapTTest(twain, snod)
+```
+The bootstrapping approach gives us a p-value of: `r boot.p`
+
+\newpage
+
+## Appendix 1: Accept-Reject Code Listing
+
+```{r SimulateAcceptReject, tidy=TRUE}
+```
+
+\newpage
+
+## Appendix 2: Random Permutation Test Code Listing
+
+```{r RandomPermutationTest, tidy=TRUE}
+```
+
+\newpage
+
+## Appendix 3: Bootstrap T Test Code Listing
+
+```{r BootstrapTTest, tidy=TRUE}
+```
+
 
