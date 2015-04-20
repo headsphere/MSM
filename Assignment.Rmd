@@ -166,22 +166,9 @@ qqnorm(snod, main = "Normal Q-Q Plot: Snodgrass")
 qqline(snod)
 ```
 
-The QQ tests do not indicate any significant departures from normality therefore we have no reason to distrust the conclusions from the t-test. A further reason to potentially distrust the t-test would be due to the small sample sizes. For this reason we are satisfied that both the permutation and bootstrap tests also give us the same asymptotic results.
+The QQ tests do not indicate any significant departures from normality therefore we have no reason to distrust the conclusions from the t-test. If however the data had exhibited signs of non-normality, only the results of the bootstrap test would have been trustworthy. 
 
-Discuss appropriateness of t-test considering non-normality of data
-
-CI's?
-
-Assumption of equal variance
-
-Difference of means vs studentized t
-
-Permutation test is more exact however is less applicable, as one can only test the null hypothesis of identical distributions. The bootstrap approach is less precise (accuracy is only guaranteed as the sample size tends to infinity) however it is more versatile for instance in this case being able to test equal means with unequal variances.
-
-
-```{r echo=FALSE, fig.align='center'}
-boxplot(twain, snod, names = c("Twain", "Snodgrass"))
-```
+A further reason to potentially distrust the t-test would be due to the small sample sizes. For this reason we are satisfied that both the permutation and bootstrap tests also give us the same asymptotic results.
 
 \newpage
 
