@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 *.html
+Assignment_cache
+Assignment_files

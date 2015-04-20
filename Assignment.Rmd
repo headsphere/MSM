@@ -131,13 +131,13 @@ The t-test gives a p-value of: `r ttest$p.value`
 ###b)
 
 The following test does a randomized permutation. The code is detailed in Appendix 2 
-```{r tidy=TRUE}
+```{r tidy=TRUE, cache=TRUE}
 pvalue = RandomPermutationTest(twain, snod)
 ```
 The random permutation test gives a p-value of: `r pvalue`
 
-This can be compared with an exact reandomization test:
-```{r warning=FALSE, message=FALSE}
+This can be compared with an exact randomization test:
+```{r warning=FALSE, message=FALSE, cache=TRUE}
 library(exactRankTests)
 exact = perm.test(x = twain, y = snod, exact = TRUE)
 ```
@@ -147,10 +147,41 @@ The exact randomization test gives a p-value of: `r exact$p.value`
 
 The following test uses a bootstrap approach. The code is detailed in Appendix 3 
 
-```{r eval=TRUE}
+```{r cache=TRUE}
 boot.p = BootstrapTTest(twain, snod)
 ```
 The bootstrapping approach gives us a p-value of: `r boot.p`
+
+###d)
+
+Using all three tests (t-test, permutation and bootstrapped t-test) the p-values are between 0.003 and 0.001, therefore giving very strong support (at the $\alpha = 0.01$ level) to reject the null hypothesis of equality of means. Based off this we are therefore led to believe that the two sets of letters are indeed written by two different people. 
+
+Even though the three sets of tests all lead to the same conclusions we must still be wary of whether the tests are appropriate for this analysis. With a standard t-test although it is robust to non-normality, it is still worth checking if the data is somewhat normal considering we are dealing with proportions which generally would be definitely non-normal. For this reason we can conduct a QQ test of the Twain and Snodgrass datasets:
+
+```{r echo=FALSE, fig.align='center'}
+par(mfrow=c(1, 2))
+qqnorm(twain, main = "Normal Q-Q Plot: Twain")
+qqline(twain)
+qqnorm(snod, main = "Normal Q-Q Plot: Snodgrass")
+qqline(snod)
+```
+
+The QQ tests do not indicate any significant departures from normality therefore we have no reason to distrust the conclusions from the t-test. A further reason to potentially distrust the t-test would be due to the small sample sizes. For this reason we are satisfied that both the permutation and bootstrap tests also give us the same asymptotic results.
+
+Discuss appropriateness of t-test considering non-normality of data
+
+CI's?
+
+Assumption of equal variance
+
+Difference of means vs studentized t
+
+Permutation test is more exact however is less applicable, as one can only test the null hypothesis of identical distributions. The bootstrap approach is less precise (accuracy is only guaranteed as the sample size tends to infinity) however it is more versatile for instance in this case being able to test equal means with unequal variances.
+
+
+```{r echo=FALSE, fig.align='center'}
+boxplot(twain, snod, names = c("Twain", "Snodgrass"))
+```
 
 \newpage
 
